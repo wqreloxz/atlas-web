@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlas - The New Age Of Local AI</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --text-muted: #555555;
+            --primary: #000000;
+            --primary-hover: #222222;
+            --primary-text: #ffffff;
+            --section-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --primary: #ffffff;
+            --primary-hover: #dddddd;
+            --primary-text: #000000;
+            --section-bg: #111111;
+            --card-bg: #000000;
+            --border-color: #222222;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-color); transition: var(--transition); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+        
+        /* Navigation */
+        header { display: flex; justify-content: space-between; padding: 2rem 5%; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .brand { display: flex; align-items: center; gap: 1rem; }
+        .brand-icon { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); }
+        .logo { font-size: 2rem; font-weight: 900; letter-spacing: -0.05em; }
+        .controls { display: flex; gap: 1.2rem; align-items: center; }
+        button { cursor: pointer; border: none; background: none; color: var(--text-color); font-weight: 600; font-size: 1rem; }
+        .theme-toggle, .lang-toggle { padding: 0.5rem; background: var(--section-bg); border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-color); transition: var(--transition); }
+        .theme-toggle:hover, .lang-toggle:hover { border-color: var(--text-color); }
+
+        /* Hero Section */
+        .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8rem 5% 6rem; max-width: 1200px; margin: 0 auto; }
+        .hero h1 { font-size: 5.5rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: -0.06em; }
+        .hero h2 { font-size: 2.2rem; color: var(--text-muted); font-weight: 400; margin-bottom: 2rem; letter-spacing: -0.02em; }
+        .hero p { max-width: 850px; font-size: 1.35rem; color: var(--text-muted); margin-bottom: 3.5rem; }
+        .btn-download { background: var(--primary); color: var(--primary-text); padding: 1.2rem 3rem; border-radius: 6px; font-size: 1.25rem; font-weight: 700; text-decoration: none; transition: var(--transition); display: inline-block; border: 1px solid var(--primary); }
+        .btn-download:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        /* Sections common */
+        section { padding: 6rem 5%; max-width: 1400px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 3rem; font-weight: 900; margin-bottom: 4rem; letter-spacing: -0.04em; text-transform: uppercase; }
+
+        /* Reviews */
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; }
+        .review-card { background: var(--section-bg); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; text-align: center; }
+        .review-text { font-style: italic; font-size: 1.15rem; color: var(--text-color); line-height: 1.6; font-weight: 400; }
+
+        /* Features */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem; }
+        .feature { border-left: 2px solid var(--text-color); padding-left: 1.5rem; }
+        .feature h3 { font-size: 1.75rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -0.02em; }
+        .feature p { color: var(--text-muted); font-size: 1.1rem; text-align: justify; }
+
+        /* Galleries for Images */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
+        .benchmarks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; }
+        .gallery-item { text-align: center; }
+        .gallery-item img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: var(--transition); cursor: pointer; display: block; }
+        .gallery-item img:hover { transform: scale(1.03); border-color: var(--text-color); }
+        .gallery-item p { margin-top: 1.2rem; font-weight: 600; color: var(--text-muted); font-size: 1rem; }
+
+        /* Lightbox (Popup Gallery) */
+        .lightbox { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .lightbox.active { display: flex; opacity: 1; pointer-events: auto; }
+        .lightbox-content { max-width: 90%; max-height: 85%; object-fit: contain; border-radius: 6px; box-shadow: 0 0 50px rgba(255, 255, 255, 0.1); transform: scale(0.95); transition: transform 0.3s ease; }
+        .lightbox.active .lightbox-content { transform: scale(1); }
+        .close-lightbox { position: absolute; top: 2rem; right: 3rem; color: #ffffff; font-size: 3rem; font-weight: 300; cursor: pointer; transition: var(--transition); line-height: 1; }
+        .close-lightbox:hover { transform: scale(1.1); color: #aaaaaa; }
+
+        /* API & Contact */
+        .api-section { background: var(--text-color); color: var(--bg-color); text-align: center; padding: 6rem 5%; border-radius: 16px; margin: 4rem 5%; transition: var(--transition); }
+        .api-section h2 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1.5rem; letter-spacing: -0.05em; }
+        .api-section p { font-size: 1.35rem; max-width: 950px; margin: 0 auto 3.5rem; opacity: 0.85; line-height: 1.8; }
+        .btn-contact { background: var(--bg-color); color: var(--text-color); padding: 1.2rem 3.5rem; border-radius: 6px; font-weight: 700; text-decoration: none; display: inline-block; font-size: 1.25rem; border: 1px solid var(--bg-color); transition: var(--transition); }
+        .btn-contact:hover { background: transparent; color: var(--bg-color); }
+
+        footer { text-align: center; padding: 3rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 1rem; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <img src="icon.jpg" alt="Atlas Logo" class="brand-icon">
+            <div class="logo">Atlas</div>
+        </div>
+        <div class="controls">
+            <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Atlas</h1>
+            <h2 data-i18n="heroSub">Локальная ИИ-Модель Нового Поколения</h2>
+            <p data-i18n="heroDesc">Абсолютно независимая и глубоко настраиваемая локальная нейросетевая модель, разворачиваемая непосредственно на вашем аппаратном обеспечении. Вы получаете полный контроль над архитектурой и весами: дообучайте систему на собственных базах знаний, коде или документах без единой утечки данных в облако. Управление осуществляется через революционный динамический интерфейс, гармонично встраивающийся в рабочую среду.</p>
+            <a href="#" class="btn-download" data-i18n="downloadBtn">Развернуть Atlas локально</a>
+        </section>
+
+        <section style="background-color: var(--section-bg); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); max-width: 100%;">
+            <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
+                <h2 class="section-title" data-i18n="reviewsTitle">Мнения инженеров и исследователей</h2>
+                <div class="reviews-grid">
+                    <div class="review-card">
+                        <p class="review-text" data-i18n="rev1">«Ультимативное решение для приватной разработки. Концепция динамического острова переворачивает представление о UX: модель всегда находится на расстоянии одного клика и не перегружает рабочее пространство громоздкими окнами.»</p>
+                    </div>
+                    <div class="review-card">
+                        <p class="review-text" data-i18n="rev2">«Возможность тонкой настройки весов на локальных датасетах позволила нам автоматизировать рутинный аудит кода без рисков компрометации интеллектуальной собственности. Скорость инференса на высоте.»</p>
+                    </div>
+                    <div class="review-card">
+                        <p class="review-text" data-i18n="rev3">«Первая полноценная локальная LLM, которая из коробки демонстрирует идеальный баланс между энергоэффективностью автономной работы и глубиной контекстуального понимания сложных технических задач.»</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title" data-i18n="featuresTitle">Архитектурные преимущества</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <h3 data-i18n="f1Title">Удобство</h3>
+                    <p data-i18n="f1Desc">Интуитивный минималистичный интерфейс в виде динамического острова интегрируется поверх любых окон. Он мгновенно адаптируется, сжимается и расширяется при обработке промптов, предоставляя моментальный доступ к контекстным действиям, генерации кода и ответам без переключения фокуса внимания.</p>
+                </div>
+                <div class="feature">
+                    <h3 data-i18n="f2Title">Настройка</h3>
+                    <p data-i18n="f2Desc">Полный спектр локального контроля. Интегрированные скрипты дообучения позволяют проводить доводку (Fine-Tuning / LoRA) на ваших собственных файлах, логах или специализированной литературе. Вы сами задаете системные промпты, длину контекста и степень строгости ответов под индивидуальные сценарии.</p>
+                </div>
+                <div class="feature">
+                    <h3 data-i18n="f3Title">Efficiency</h3>
+                    <p data-i18n="f3Desc">DuckLLM Offers Efficiency For Better Responses And Better Battery Life. Оптимизированное ядро инференса с применением передовых методов 4-битного и 8-битного квантования обеспечивает минимальную нагрузку на процессор и видеопамять, кратно продлевая автономную работу вашего устройства.</p>
+                </div>
+                <div class="feature">
+                    <h3 data-i18n="f4Title">Knowledge</h3>
+                    <p data-i18n="f4Desc">DuckLLM Is Trained On a Vast Majority Of Data And Supports 29+ Languages. Модель обладает колоссальным объемом встроенных структурированных данных, уверенно оперирует сложной технической терминологией, алгоритмами, математической логикой и свободно переключается между языковыми пространствами.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="border-top: 1px solid var(--border-color);">
+            <h2 class="section-title" data-i18n="interfaceTitle">Интерфейс системы</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="7.png" alt="Chat Interface">
+                    <p data-i18n="uiChat">Динамический интерфейс взаимодействия</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="6.png" alt="Settings Interface">
+                    <p data-i18n="uiSettings">Панель тонкой конфигурации параметров</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="5.png" alt="Memory Interface">
+                    <p data-i18n="uiMemory">Модуль управления базами знаний и контекстом</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="border-top: 1px solid var(--border-color);">
+            <h2 class="section-title" data-i18n="benchmarksTitle">Анализ производительности и бенчмарки</h2>
+            <div class="benchmarks-grid">
+                <div class="gallery-item">
+                    <img src="1.png" alt="Token Generation Speed">
+                    <p data-i18n="bench1">График распределения скорости генерации токенов (Tokens/Sec)</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="2.png" alt="Prompt Processing Speed">
+                    <p data-i18n="bench2">Сравнительный анализ времени первичной обработки промпта</p>
+                </div>
+                <div class="gallery-item">
+                    <img src="3.png" alt="Output Speed vs Prompt Speed Correlation">
+                    <p data-i18n="bench3">Корреляция пропускной способности вывода при масштабировании контекста</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="api-section">
+            <h2 data-i18n="apiTitle">Собственная инфраструктура без ограничений</h2>
+            <p data-i18n="apiDesc">Забудьте о жестких рамках коммерческих подписок и внешних партнерских программ. Архитектура Atlas позволяет бесшовно подключать ваши личные API-ключи, разворачивать OpenAI-совместимый локальный сервер и гибко настраивать автоматизированные сценарии использования. Интегрируйте модель в среды разработки (IDE), создавайте независимых автономных агентов для работы с локальной файловой системой и выстраивайте рабочие процессы любой сложности под свои задачи.</p>
+            <a href="mailto:wqreloxzz@gmail.com" class="btn-contact" data-i18n="contactBtn">Связаться по вопросам внедрения</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Atlas AI Core. Все права защищены. Разработано wqreloxzz.</p>
+    </footer>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" class="lightbox-content" src="" alt="Enlarged view">
+    </div>
+
+    <script>
+        // Theme Toggling
+        const themeBtn = document.getElementById('themeBtn');
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeBtn.textContent = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+            }
+        }
+
+        // Lightbox Gallery Functions
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+        }
+
+        // Stop propagation when clicking on the image inside lightbox so it doesn't trigger close
+        document.getElementById('lightbox-img').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Add click events to images dynamically
+        document.querySelectorAll('.gallery-item img').forEach(img => {
+            img.addEventListener('click', function() {
+                openLightbox(this.src);
+            });
+        });
+
+        // Language Data
+        const i18n = {
+            ru: {
+                heroSub: "Локальная ИИ-Модель Нового Поколения",
+                heroDesc: "Абсолютно независимая и глубоко настраиваемая локальная нейросетевая модель, разворачиваемая непосредственно на вашем аппаратном обеспечении. Вы получаете полный контроль над архитектурой и весами: дообучайте систему на собственных базах знаний, коде или документах без единой утечки данных в облако. Управление осуществляется через революционный динамический интерфейс, гармонично встраивающийся в рабочую среду.",
+                downloadBtn: "Развернуть Atlas локально",
+                reviewsTitle: "Мнения инженеров и исследователей",
+                rev1: "«Ультимативное решение для приватной разработки. Концепция динамического острова переворачивает представление о UX: модель всегда находится на расстоянии одного клика и не перегружает рабочее пространство громоздкими окнами.»",
+                rev2: "«Возможность тонкой настройки весов на локальных датасетах позволила нам автоматизировать рутинный аудит кода без рисков компрометации интеллектуальной собственности. Скорость инференса на высоте.»",
+                rev3: "«Первая полноценная локальная LLM, которая из коробки демонстрирует идеальный баланс между энергоэффективностью автономной работы и глубиной контекстуального понимания сложных технических задач.»",
+                featuresTitle: "Архитектурные преимущества",
+                f1Title: "Удобство",
+                f1Desc: "Интуитивный минималистичный интерфейс в виде динамического острова интегрируется поверх любых окон. Он мгновенно адаптируется, сжимается и расширяется при обработке промптов, предоставляя моментальный доступ к контекстным действиям, генерации кода и ответам без переключения фокуса внимания.",
+                f2Title: "Настройка",
+                f2Desc: "Полный спектр локального контроля. Интегрированные скрипты дообучения позволяют проводить доводку (Fine-Tuning / LoRA) на ваших собственных файлах, логах или специализированной литературе. Вы сами задаете системные промпты, длину контекста и степень строгости ответов под индивидуальные сценарии.",
+                f3Title: "Efficiency",
+                f3Desc: "DuckLLM Offers Efficiency For Better Responses And Better Battery Life. Оптимизированное ядро инференса с применением передовых методов 4-битного и 8-битного квантования обеспечивает минимальную нагрузку на процессор и видеопамять, кратно продлевая автономную работу вашего устройства.",
+                f4Title: "Knowledge",
+                f4Desc: "DuckLLM Is Trained On a Vast Majority Of Data And Supports 29+ Languages. Модель обладает колоссальным объемом встроенных структурированных данных, уверенно оперирует сложной технической терминологией, алгоритмами, математической логикой и свободно переключается между языковыми пространствами.",
+                interfaceTitle: "Интерфейс системы",
+                uiChat: "Динамический интерфейс взаимодействия",
+                uiSettings: "Панель тонкой конфигурации параметров",
+                uiMemory: "Модуль управления базами знаний и контекстом",
+                benchmarksTitle: "Анализ производительности и бенчмарки",
+                bench1: "График распределения скорости генерации токенов (Tokens/Sec)",
+                bench2: "Сравнительный анализ времени первичной обработки промпта",
+                bench3: "Корреляция пропускной способности вывода при масштабировании контекста",
+                apiTitle: "Собственная инфраструктура без ограничений",
+                apiDesc: "Забудьте о жестких рамках коммерческих подписок и внешних партнерских программ. Архитектура Atlas позволяет бесшовно подключать ваши личные API-ключи, разворачивать OpenAI-совместимый локальный сервер и гибко настраивать автоматизированные сценарии использования. Интегрируйте модель в среды разработки (IDE), создавайте независимых автономных агентов для работы с локальной файловой системой и выстраивайте рабочие процессы любой сложности под свои задачи.",
+                contactBtn: "Связаться по вопросам внедрения"
+            },
+            en: {
+                heroSub: "Next-Generation Local AI Model",
+                heroDesc: "A fully autonomous and deeply customizable local neural network model deployed directly on your own hardware. You get complete control over the architecture and weights: fine-tune the system on your custom knowledge bases, codebases, or sensitive documents without a single byte leaking to the cloud. Operated via a revolutionary dynamic interface that seamlessly integrates into your environment.",
+                downloadBtn: "Deploy Atlas Locally",
+                reviewsTitle: "Engineers and Researchers Feedback",
+                rev1: "“The ultimate solution for private development. The dynamic island concept reshapes the understanding of UX: the model is always just one click away without cluttering the desktop workspace with bulky app windows.”",
+                rev2: "“The ability to perform local weights fine-tuning on proprietary datasets allowed us to completely automate code auditing without compromising intellectual property. Inference speeds are stellar.”",
+                rev3: "“The first comprehensive local LLM that provides an ideal balance out of the box between battery efficiency during off-grid use and deep contextual reasoning for sophisticated tasks.”",
+                featuresTitle: "Architectural Advantages",
+                f1Title: "Convenience",
+                f1Desc: "An intuitive minimalist dynamic island interface sits on top of any active windows. It fluidly adapts, morphs, and expands during prompt execution, providing rapid access to inline actions, code syntax generation, and prompt results without breaking your focus.",
+                f2Title: "Customization",
+                f2Desc: "Total local pipeline control. Integrated training orchestration routines allow fine-tuning (LoRA/QLoRA) natively using your personal log streams, documents, or technical text. Fine-tune system prompts, context constraints, and temperature ratios freely.",
+                f3Title: "Efficiency",
+                f3Desc: "DuckLLM Offers Efficiency For Better Responses And Better Battery Life. Optimized backend engine utilizing advanced 4-bit and 8-bit quantization methodologies ensures low CPU and VRAM overhead, significantly extending your machine's standalone runtime.",
+                f4Title: "Knowledge",
+                f4Desc: "DuckLLM Is Trained On a Vast Majority Of Data And Supports 29+ Languages. The system encompasses an extensive volume of structured pre-training parameters, excelling at technical taxonomy, mathematical logic, and multi-lingual transitions.",
+                interfaceTitle: "Application UI Overview",
+                uiChat: "Dynamic Interaction Workspace",
+                uiSettings: "Fine-Tuning & Weights Configuration Console",
+                uiMemory: "Context & Local Knowledge Vector Pipeline",
+                benchmarksTitle: "Performance Analysis & Benchmarks",
+                bench1: "Token Generation Throughput Metric Chart (Tokens/Sec)",
+                bench2: "Comparative First-Token Latency & Processing Benchmarks",
+                bench3: "Context Scaling vs Output Bandwidth Output Correlation",
+                apiTitle: "Unrestricted Infrastructure Autonomy",
+                apiDesc: "Forget about vendor locks and corporate API limitations. The Atlas stack enables you to seamlessly plug in your custom keys, expose an OpenAI-compatible local server endpoint, and choreograph advanced automated usage scenarios. Integrate natively with modern IDEs, build local file system orchestrating agents, and map workflows exactly to your specifications.",
+                contactBtn: "Contact Engineering Support"
+            }
+        };
+
+        // Language Toggling
+        let currentLang = 'ru';
+        const langBtn = document.getElementById('langBtn');
+
+        function toggleLang() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            langBtn.textContent = currentLang === 'ru' ? 'EN' : 'RU';
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) {
+                    el.textContent = i18n[currentLang][key];
+                }
+            });
+        }
+    </script>
+</body>
+</html>
